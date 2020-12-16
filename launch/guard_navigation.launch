@@ -2,6 +2,7 @@
   <!-- Map server -->
   <arg name="map_file" default="$(find turtle_guard)/maps/map3.yaml"/>
   <arg name="3d_sensor" default="$(env TURTLEBOT_3D_SENSOR)"/>  <!-- r200, kinect, asus_xtion_pro -->
+  <arg name= "rviz" default = "true" />
 
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
@@ -24,7 +25,9 @@
  <!--
   Used for visualising the turtlebot while building a map or navigating with the ros navistack.
  -->
+<group if="$(arg rviz)">
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_rviz_launchers)/rviz/navigation.rviz"/>
+</group>
 
 
 

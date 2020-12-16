@@ -27,7 +27,6 @@ waypoints = [
 	[(-2.4514, 7.4468, 0.0000, 0.0000),(0.0000, 0.0000, 0.1949, 0.9808)]
 ]
 
-
 def goal_pose(pose):
 	goal_pose = MoveBaseGoal()
 	goal_pose.target_pose.header.frame_id = 'map'
@@ -41,16 +40,18 @@ def goal_pose(pose):
 	
 	return goal_pose
 
-def giro(pose):
+def giro(pose, quaternion):
 	goal_pose = MoveBaseGoal()	
 	goal_pose.target_pose.header.frame_id = 'map'
 	goal_pose.target_pose.pose.position.x = pose[0][0]
 	goal_pose.target_pose.pose.position.y = pose[0][1]
 	goal_pose.target_pose.pose.position.z = pose[0][2]
-	goal_pose.target_pose.pose.orientation.x = pose[1][0]
-	goal_pose.target_pose.pose.orientation.y = pose[1][1]
-	goal_pose.target_pose.pose.orientation.z = pose[1][2]
-	goal_pose.target_pose.pose.orientation.w = pose[1][3]
+	goal_pose.target_pose.pose.orientation.x = quaternion[0]
+	goal_pose.target_pose.pose.orientation.y = quaternion[1]
+	goal_pose.target_pose.pose.orientation.z = quaternion[2]
+	goal_pose.target_pose.pose.orientation.w = quaternion[3]
+
+	return goal_pose
 
 if __name__ == '__main__':
 	rospy.init_node('patrol')
@@ -59,24 +60,38 @@ if __name__ == '__main__':
 	client.wait_for_server()
 	
 	while not rospy.is_shutdown():
+		
+		rospy.loginfo('Comenzando patrulla normal ... ')
 		for pose in waypoints:
 			goal = goal_pose(pose)
 			client.send_goal(goal)
 			client.wait_for_result()
 			
 			# Opcion 1
-			goal = giro(pose)
+			rospy.loginfo('Buscando intrusos ...')
+			for i in range(4):
+				quaternion = tf.transformations.quaternion_from_euler(0.0, 0.0, 1.57*i) 
+				goal = giro(pose, quaternion)
+				client.send_goal(goal)
+				client.wait_for_result()
+
+			# # Opcion 2
+			# pose = goal + 180
+			# goal = goal_pose(pose)
+			# client.send_goal(goal)
+			# client.wait_for_result()
+		
+		rospy.loginfo('Comenzando patrulla en orden inverso ... ')
+		for pose in reversed(waypoints):
+			
+			goal = goal_pose(pose)
 			client.send_goal(goal)
 			client.wait_for_result()
 
-			# Opcion 2
-			pose = goal + 180
-			goal = goal_pose(pose)
-			client.send_goal(goal)
-			client.wait_for_result()
-		
-		for pose in reversed(waypoints):
-			goal = goal_pose(pose)
-			client.send_goal(goal)
-			client.wait_for_result()
+			rospy.loginfo('Buscando intrusos ...')
+			for i in range(4):
+				quaternion = tf.transformations.quaternion_from_euler(0.0, 0.0, 1.57*i) 
+				goal = giro(pose, quaternion)
+				client.send_goal(goal)
+				client.wait_for_result()
 		
