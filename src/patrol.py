@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import rospy
 import actionlib
 
@@ -44,8 +46,14 @@ if __name__ == '__main__':
     client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
     client.wait_for_server()
 
-    while True:
+    while not rospy.is_shutdown():
         for pose in waypoints:
             goal = goal_pose(pose)
             client.send_goal(goal)
             client.wait_for_result()
+		
+        for pose in reversed(waypoints):
+            goal = goal_pose(pose)
+            client.send_goal(goal)
+            client.wait_for_result()
+			
