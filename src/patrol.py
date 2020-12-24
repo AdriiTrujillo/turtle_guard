@@ -66,10 +66,11 @@ if __name__ == '__main__':
 			goal = goal_pose(pose)
 			client.send_goal(goal)
 			client.wait_for_result()
+
 			
 			# Opcion 1
 			rospy.loginfo('Buscando intrusos ...')
-			for i in range(4):
+			for i in range(5):
 				quaternion = tf.transformations.quaternion_from_euler(0.0, 0.0, 1.57*i) 
 				goal = giro(pose, quaternion)
 				client.send_goal(goal)
