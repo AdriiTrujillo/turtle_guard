@@ -9,10 +9,18 @@ import sys
 import math
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from turtle_guard.msg import GuardAction, GuardGoal, GuardResult
 import tf
 
 point = int(0)
 intruso = False
+
+PENDING = 0
+ACTIVE = 1
+PREEMPTED = 2
+SUCCEEDED = 3
+ABORTED = 4
+RECALLED = 8
 
 waypoints = [
 	[(-3.6424, -3.4765, 0.0000), (0.0000, 0.0000, 0.2121, 0.9772)],
@@ -59,17 +67,42 @@ class IrAPunto(smach.State):
 
     def execute(self, userdata):
         global point
+        detection_result = True
+        movement_result = False
+        # intruso = GuardResult
         client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         client.wait_for_server()
         rospy.loginfo('Yendo a punto')
+        client_p = actionlib.SimpleActionClient('detect_person_action', GuardAction)
+        client_p.wait_for_server()
+        rospy.loginfo('Buscando intruso')
+        
+        point_goal = goal_pose(waypoints[point])
+        detection_goal = GuardGoal()
+        detection_goal.finish = True
+        client.send_goal(point_goal)
+        client_p.send_goal(detection_goal)
 
-        goal = goal_pose(waypoints[point])
-        client.send_goal(goal)
-        result = client.wait_for_result()
+        movement_status = client.get_state()
+        detection_status = client_p.get_state()
 
-        if intruso:
+        while movement_status < SUCCEEDED and detection_status < SUCCEEDED:
+            movement_status = client.get_state()
+            detection_status = client_p.get_state()
+
+        if detection_status == RECALLED:
+            rospy.loginfo("Detección cancelada")
+
+        if movement_status == RECALLED:
+            rospy.loginfo("Movimiento cancelado")
+
+        detection_result = client_p.get_result()
+        print(detection_result)
+        movement_result = client.get_result() 
+
+        if detection_result:
             return 'persona_detectada'
-        elif result:
+        elif movement_result:
             return 'llega_a_punto'
         else:
             return 'fallo'
@@ -84,13 +117,17 @@ class Girar(smach.State):
         global point, intruso
         client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         client.wait_for_server()
+        # rospy.loginfo('Yendo a punto')
+        # client_p = actionlib.SimpleActionClient('detect_person_action', GuardAction)
+        # client_p.wait_for_server()
+        rospy.loginfo('Buscando intrusos ...')        
 
-        rospy.loginfo('Buscando intrusos ...')
         for i in range(5):
             quaternion = tf.transformations.quaternion_from_euler(0.0, 0.0, (math.pi/2)*i) 
             goal = giro(waypoints[point], quaternion)
             client.send_goal(goal)
             result = client.wait_for_result()
+
 
         if point < len(waypoints)-1:
             point += 1

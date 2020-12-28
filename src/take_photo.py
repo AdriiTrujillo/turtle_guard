@@ -55,6 +55,10 @@ class TakePhoto:
         else:
             return False
 
+    def get_image(self):
+        if self.image_received:
+            return self.image
+
 if __name__ == '__main__':
 
     # Initialize

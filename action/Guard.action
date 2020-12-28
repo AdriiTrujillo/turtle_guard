@@ -1,0 +1,8 @@
+# goal
+bool finish
+---
+# result 
+bool person_detected
+---
+# feedback
+bool start
