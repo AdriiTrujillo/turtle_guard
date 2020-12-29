@@ -156,6 +156,7 @@ class detect_Person(object):
         self._feedback.start = True
         
         rospy.loginfo("Detectando persona")
+        # self._camera.take_picture("picture.jpg")
 
         while not detected:
 

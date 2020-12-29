@@ -90,6 +90,12 @@ class IrAPunto(smach.State):
             movement_status = client.get_state()
             detection_status = client_p.get_state()
 
+        if movement_status == SUCCEEDED and detection_status < SUCCEEDED:
+            client_p.cancel_goal()
+
+        if detection_status == SUCCEEDED and movement_status < SUCCEEDED:
+            client.cancel_goal()
+
         if detection_status == RECALLED:
             rospy.loginfo("Detección cancelada")
 
@@ -171,7 +177,7 @@ def main():
                                              'persona_detectada': 'Alarma'})
         smach.StateMachine.add('Girar', Girar(), 
                                 transitions={'fallo':'FALLO', 
-                                             'giro_terminado':'Girar',
+                                             'giro_terminado':'IrAPunto',
                                              'persona_detectada': 'Alarma'})
         smach.StateMachine.add('Alarma', Alarma(), 
                                 transitions={'fallo':'FALLO', 
