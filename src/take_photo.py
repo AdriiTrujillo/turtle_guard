@@ -71,10 +71,13 @@ if __name__ == '__main__':
     # Default value is 'photo.jpg'
     img_title = rospy.get_param('~image_title', 'photo.jpg')
 
-    if camera.take_picture(img_title):
-        rospy.loginfo("Saved image " + img_title)
-    else:
-        rospy.loginfo("No images received")
+    cv2.imshow('window', camera.get_image())
+    cv2.waitKey(0)
+
+    # if camera.take_picture(img_title):
+    #     rospy.loginfo("Saved image " + img_title)
+    # else:
+    #     rospy.loginfo("No images received")
 
     # Sleep to give the last log messages time to be sent
     rospy.sleep(1)

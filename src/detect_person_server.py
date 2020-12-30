@@ -157,6 +157,7 @@ class detect_Person(object):
         
         rospy.loginfo("Detectando persona")
         # self._camera.take_picture("picture.jpg")
+        # cv2.imshow('image',self._camera.get_image())
 
         while not detected:
 
@@ -174,7 +175,9 @@ class detect_Person(object):
             self._as.publish_feedback(self._feedback)
             # this step is not necessary, the sequence is computed at 1 Hz for demonstration purposes
             r.sleep()
-          
+
+        cv2.destroyWindow('image')
+
         if success:
             self._result.person_detected = True
             rospy.loginfo('%s: Succeeded' % self._action_name)
