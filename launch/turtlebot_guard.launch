@@ -1,6 +1,7 @@
 <launch>
-  <!-- <arg name="world_file"  default="$(find turtle_guard)/worlds/simple_office_with_people.world"/> -->
-  <arg name="world_file"  default="$(find turtle_guard)/worlds/simple_office.world"/>
+
+  <arg name="world_file"  default="$(find turtle_guard)/worlds/simple_office_with_people.world"/>
+  <!-- <arg name="world_file"  default="$(find turtle_guard)/worlds/simple_office.world"/> -->
 
   <arg name="base"      value="$(optenv TURTLEBOT_BASE kobuki)"/> <!-- create, roomba -->
   <arg name="battery"   value="$(optenv TURTLEBOT_BATTERY /proc/acpi/battery/BAT0)"/>  <!-- /proc/acpi/battery/BAT0 --> 

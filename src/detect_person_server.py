@@ -46,6 +46,7 @@ class DetectorAPI:
         self.num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
 
     def processFrame(self, image):
+
         threshold = 0.7
         # Expand dimensions since the trained_model expects images to have shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(image, axis=0)
@@ -145,6 +146,7 @@ class detect_Person(object):
         self._action_name = name
         self._as = actionlib.SimpleActionServer(self._action_name, GuardAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
+        self._path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
       
     def execute_cb(self, goal):
         # helper variables
@@ -155,9 +157,9 @@ class detect_Person(object):
         # append the seeds for the fibonacci sequence
         self._feedback.start = True
         
-        rospy.loginfo("Detectando persona")
-        # self._camera.take_picture("picture.jpg")
-        # cv2.imshow('image',self._camera.get_image())
+        rospy.loginfo("Detectando persona ...")
+
+        img = self._camera.get_image()
 
         while not detected:
 
@@ -176,10 +178,10 @@ class detect_Person(object):
             # this step is not necessary, the sequence is computed at 1 Hz for demonstration purposes
             r.sleep()
 
-        cv2.destroyWindow('image')
-
         if success:
             self._result.person_detected = True
+            cv2.imwrite(self._path, img)
+            rospy.loginfo("Saved image at " + self._path)
             rospy.loginfo('%s: Succeeded' % self._action_name)
             self._as.set_succeeded(self._result)
         

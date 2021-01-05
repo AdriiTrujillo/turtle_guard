@@ -64,20 +64,21 @@ if __name__ == '__main__':
     # Initialize
     rospy.init_node('take_photo', anonymous=False)
     camera = TakePhoto()
+    path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
 
     # Take a photo
 
     # Use '_image_title' parameter from command line
     # Default value is 'photo.jpg'
-    img_title = rospy.get_param('~image_title', 'photo.jpg')
+    # img_title = rospy.get_param('~image_title', 'photo.jpg')
 
-    cv2.imshow('window', camera.get_image())
-    cv2.waitKey(0)
+    # cv2.imshow('window', camera.get_image())
+    # cv2.waitKey(0)
 
-    # if camera.take_picture(img_title):
-    #     rospy.loginfo("Saved image " + img_title)
-    # else:
-    #     rospy.loginfo("No images received")
+    if camera.take_picture(path):
+        rospy.loginfo("Saved image " + path)
+    else:
+        rospy.loginfo("No images received")
 
     # Sleep to give the last log messages time to be sent
     rospy.sleep(1)

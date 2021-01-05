@@ -69,13 +69,13 @@ class IrAPunto(smach.State):
         global point
         detection_result = True
         movement_result = False
-        # intruso = GuardResult
+
         client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         client.wait_for_server()
-        rospy.loginfo('Yendo a punto')
+        rospy.loginfo('Yendo a punto ...')
         client_p = actionlib.SimpleActionClient('detect_person_action', GuardAction)
         client_p.wait_for_server()
-        rospy.loginfo('Buscando intruso')
+        rospy.loginfo('Buscando intruso ...')
         
         point_goal = goal_pose(waypoints[point])
         detection_goal = GuardGoal()
@@ -103,7 +103,7 @@ class IrAPunto(smach.State):
             rospy.loginfo("Movimiento cancelado")
 
         detection_result = client_p.get_result()
-        print(detection_result)
+        rospy.sleep(1.0)
         movement_result = client.get_result() 
 
         if detection_result:
@@ -120,44 +120,79 @@ class Girar(smach.State):
         self.counter = 0
 
     def execute(self, userdata):
-        global point, intruso
-        client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-        client.wait_for_server()
-        # rospy.loginfo('Yendo a punto')
-        # client_p = actionlib.SimpleActionClient('detect_person_action', GuardAction)
-        # client_p.wait_for_server()
-        rospy.loginfo('Buscando intrusos ...')        
+        global point
+        detection_result = True
+        turn_result = False
+
+        client_g = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        client_g.wait_for_server()
+        rospy.loginfo('Girando ... ')
+        client_p = actionlib.SimpleActionClient('detect_person_action', GuardAction)
+        client_p.wait_for_server()
+        rospy.loginfo('Buscando intrusos ...')     
+
+        detection_goal = GuardGoal()
+        detection_goal.finish = True
+        client_p.send_goal(detection_goal)
+        detection_status = client_p.get_state()   
 
         for i in range(5):
-            quaternion = tf.transformations.quaternion_from_euler(0.0, 0.0, (math.pi/2)*i) 
-            goal = giro(waypoints[point], quaternion)
-            client.send_goal(goal)
-            result = client.wait_for_result()
 
+            quaternion = tf.transformations.quaternion_from_euler(0.0, 0.0, (math.pi/2)*i) 
+            point_goal = giro(waypoints[point], quaternion)
+
+            client_g.send_goal(point_goal)
+            
+            turn_status = client_g.get_state()
+            detection_status = client_p.get_state()
+
+            while turn_status < SUCCEEDED and detection_status < SUCCEEDED: 
+                turn_status = client_g.get_state()
+                detection_status = client_p.get_state()
+
+            if detection_status == SUCCEEDED and turn_status < SUCCEEDED:
+                client_g.cancel_goal()
+                break
+
+            if detection_status == RECALLED:
+                rospy.loginfo("Detección cancelada")
+
+            if turn_status == RECALLED:
+                rospy.loginfo("Giro cancelado")
+
+        if turn_status == SUCCEEDED and detection_status < SUCCEEDED:
+            client_p.cancel_goal()
+
+        detection_result = client_p.get_result()
+        rospy.sleep(1.0)
+        turn_result = client_g.get_result() 
 
         if point < len(waypoints)-1:
             point += 1
         else:
-            intruso = True
+            # detection_result = True
             point = 0
 
-        if intruso:
+        if detection_result:
             return 'persona_detectada'
-        elif result:
+        elif turn_result:
             return 'giro_terminado'
         else:
             return 'fallo'
 
 class Alarma(smach.State):
     """Estado de Alarma."""
+
     def __init__(self):
         smach.State.__init__(self, outcomes=['fallo','terminado'])
         self.counter = 0
 
     def execute(self, userdata):
-        rospy.loginfo("Hay Alguien!!")
 
-        #TODO: hacer todo lol
+        rospy.loginfo(" ¡¡ Hay Alguien !! ")
+        rospy.loginfo(" Se ha detectado un intruso ... ")
+        rospy.loginfo(" Avisando a las autoridades locales ... ")
+        rospy.loginfo(" Compruebe su directorio configurado para ver la imagen obtenida ... ")
 
         if True:
             return 'terminado'
