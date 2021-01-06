@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import print_function
 
@@ -13,14 +14,17 @@ import sys
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
+
+# Importamos los mensajes de este Action
 from turtle_guard.msg import GuardAction
 from turtle_guard.msg import GuardGoal
 from turtle_guard.msg import GuardResult
 from turtle_guard.msg import GuardFeedback
 
 
-
+# Clase que corre la red neuronal 
 class DetectorAPI:
+    # En el constructor realizamos las inicializaciones necesarias
     def __init__(self, path_to_ckpt):
         self.path_to_ckpt = path_to_ckpt
 
@@ -35,22 +39,24 @@ class DetectorAPI:
         self.default_graph = self.detection_graph.as_default()
         self.sess = tf.compat.v1.Session(graph=self.detection_graph)
 
-        # Definite input and output Tensors for detection_graph
+        # Define los Tonsores de entrada y salida para detection_graph
         self.image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
-        # Each box represents a part of the image where a particular object was detected.
+        # Cada box representa una parte de la imagen donde un objeto en partiuclar fue detectado.
         self.detection_boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
-        # Each score represent how level of confidence for each of the objects.
-        # Score is shown on the result image, together with the class label.
+        # Cada puntuacion representa el nivel de como de confiable es cada objeto.
+        # La puntuacion se muestra en la imagen resultado junto con la etiqueta de la clase.
         self.detection_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
         self.detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
         self.num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
 
+    # Metodo para realizar el procesamiento de la imagen 
     def processFrame(self, image):
 
         threshold = 0.7
-        # Expand dimensions since the trained_model expects images to have shape: [1, None, None, 3]
+        # Expande las dimensiones ya que el modelo entrenado espera imagenes que tengan shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(image, axis=0)
-        # Actual detection.
+
+        # Proceso de deteccion
         start_time = time.time()
         (boxes, scores, classes, num) = self.sess.run(
             [self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
@@ -59,6 +65,7 @@ class DetectorAPI:
 
         print("Elapsed Time:", end_time-start_time)
 
+        # Procesamiento para generar los boxes de cada objeto detectado.
         im_height, im_width,_ = image.shape
         boxes_list = [None for i in range(boxes.shape[1])]
         for i in range(boxes.shape[1]):
@@ -67,20 +74,22 @@ class DetectorAPI:
                         int(boxes[0,i,2] * im_height),
                         int(boxes[0,i,3]*im_width))
 
-
+        # Inicializaciones
         boxes_f = boxes_list
         scores_f = scores[0].tolist()
         classes_f = [int(x) for x in classes[0].tolist()]
 
         cont = 0
 
+        # Filtro para descartar falsos positivos
         for i in range(len(boxes_f)):
-            # Class 1 represents human
+            # Clase 1 representa humanos
             if classes_f[i] == 1 and scores_f[i] > threshold:
                 cont += 1
 
         persona = False
 
+        # Si se ha encotrado algún humano cambiamos el booleano a True
         if cont > 0:
             persona = True
 
@@ -94,30 +103,33 @@ class DetectorAPI:
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
 
+# Clase para obtener procesar fotos de la camara 
 class TakePhoto:
     def __init__(self):
 
         self.bridge = CvBridge()
         self.image_received = False
 
-        # Connect image topic
+        # Topic de la camara
         img_topic = "/camera/rgb/image_raw"
         self.image_sub = rospy.Subscriber(img_topic, Image, self.callback)
 
-        # Allow up to one second to connection
+        # Esperar 1 segundo para conectar el topic
         rospy.sleep(1)
 
     def callback(self, data):
 
-        # Convert image to OpenCV format
+        # Convertir la imagen a OpenCV
         try:
             cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
             print(e)
 
         self.image_received = True
+        # Guardar la imagen en la variable de la clase
         self.image = cv_image
 
+    # Metodo para guardar la imagen en el equipo
     def take_picture(self, img_title):
         if self.image_received:
             # Save an image
@@ -126,6 +138,7 @@ class TakePhoto:
         else:
             return False
 
+    # Metodo para devolver la imagen 
     def get_image(self):
         if self.image_received:
             return self.image
@@ -134,10 +147,12 @@ class TakePhoto:
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
 
+# Clase que contiene el Action server completo
 class detect_Person(object):
     # create messages that are used to publish feedback/result
     _feedback = GuardFeedback()
     _result = GuardResult()
+    # CAMBIAR SEGUN LA RUTA DEL EQUIPO QUE SE USE
     _model_path = '/home/adrii/catkin_ws/src/turtle_guard/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
     _odapi = DetectorAPI(path_to_ckpt=_model_path)
     _camera = TakePhoto()
@@ -146,45 +161,58 @@ class detect_Person(object):
         self._action_name = name
         self._as = actionlib.SimpleActionServer(self._action_name, GuardAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
+        # CAMBIAR SEGUN LA RUTA DEL EQUIPO QUE SE USE
         self._path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
-      
+    
+    # Función callback donde se realiza el procesamiento
     def execute_cb(self, goal):
-        # helper variables
+
+        # Inicializaciones
         r = rospy.Rate(1)
         success = True
         detected = False
     
-        # append the seeds for the fibonacci sequence
+        # Cambiamos el estado del feedback
         self._feedback.start = True
         
         rospy.loginfo("Detectando persona ...")
 
+        # Creamos una variable y guardamos una imagen de la camara
         img = self._camera.get_image()
 
         while not detected:
 
+            # Actualizamos la imagen en cada iteracion
             img = self._camera.get_image()
+            # Cambiamos las medidas para que la red pueda trabajar mejor
             img = cv2.resize(img, (1280, 720))
+            # Obtenemos el resultado de la red neuronal para la imagen en esta iteracion
             detected = self._odapi.processFrame(img)
 
-            # check that preempt has not been requested by the client
+            # Se comprueba que el cliente no ha cancelado el action service
             if self._as.is_preempt_requested():
                 rospy.loginfo('%s: Preempted' % self._action_name)
                 self._as.set_preempted()
-                success = False
+                success = False # Si se cancela el actión no se completa el proceso
                 break
-            # publish the feedback
+
+            # Publciar un feedback como que sigue activo el action service
             self._as.publish_feedback(self._feedback)
-            # this step is not necessary, the sequence is computed at 1 Hz for demonstration purposes
             r.sleep()
 
+        # Si se ha terminado el proceso sin cancelarse
         if success:
-            self._result.person_detected = True
+            # El action service devuelve True
+            self._result.person_detected = True 
+            # Se guarda la imagen en el equipo
             cv2.imwrite(self._path, img)
             rospy.loginfo("Saved image at " + self._path)
             rospy.loginfo('%s: Succeeded' % self._action_name)
+            # Se camibia el estado del action service a completado
             self._as.set_succeeded(self._result)
-        
+
+# En el main se crea un objeto de la clase detect_person
+# y se hace rosoy.spin() para que el servicio continue de manera continua
 if __name__ == '__main__':
     rospy.init_node('detect_person_action_server')
     server = detect_Person("detect_person_action")
