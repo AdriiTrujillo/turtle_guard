@@ -150,12 +150,15 @@ class TakePhoto:
 
 # Clase que contiene el Action server completo
 class detect_Person(object):
-    # create messages that are used to publish feedback/result
+    # objeto de la clase Rospkg para poder obtener la ruta del paquete turtle_guard
     _rospack = rospkg.RosPack()
+    # Crear los mensajes para publicar en feedback/result
     _feedback = GuardFeedback()
     _result = GuardResult()
     # CAMBIAR SEGUN LA RUTA DEL EQUIPO QUE SE USE
     # _model_path = '/home/adrii/catkin_ws/src/turtle_guard/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
+    # UTILIZANDO ESTE METODO NO ES NECESARIO CAMBIAR NADA
+    # Obtener la ruta del paquete turtle_guard independientemente del equipo en que se ejecute
     _model_path = _rospack.get_path('turtle_guard') + '/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
     _odapi = DetectorAPI(path_to_ckpt=_model_path)
     _camera = TakePhoto()
@@ -166,6 +169,8 @@ class detect_Person(object):
         self._as.start()
         # CAMBIAR SEGUN LA RUTA DEL EQUIPO QUE SE USE
         # self._path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
+        # UTILIZANDO ESTE METODO NO ES NECESARIO CAMBIAR NADA
+        # Obtener la ruta del paquete turtle_guard independientemente del equipo en que se ejecute  
         self._rospack = rospkg.RosPack()
         self._path =  self._rospack.get_path('turtle_guard') + '/pictures/intruso.jpg'
     

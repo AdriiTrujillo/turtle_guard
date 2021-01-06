@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <arg name="people" default="false" />
+
+    <group if="$(arg people)">
+        <include file="$(find turtle_guard)/launch/turtlebot_guard.launch">
+            <arg name="world_file"  value="$(find turtle_guard)/worlds/simple_office_with_people.world"/>
+        </include>
+    </group>
+
+    <group unless="$(arg people)">
+        <include file="$(find turtle_guard)/launch/turtlebot_guard.launch">
+            <arg name="world_file"  value="$(find turtle_guard)/worlds/simple_office.world"/>
+        </include>
+    </group>
+
+    <include file="$(find turtle_guard)/launch/guard_navigation.launch"/>    
+
+</launch>

@@ -26,7 +26,7 @@
   Used for visualising the turtlebot while building a map or navigating with the ros navistack.
  -->
 <group if="$(arg rviz)">
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_rviz_launchers)/rviz/navigation.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtle_guard)/rviz/navigation_camera.rviz"/>
 </group>
 
 
