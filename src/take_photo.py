@@ -19,6 +19,7 @@ from __future__ import print_function
 import sys
 import rospy
 import cv2
+import rospkg
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -63,22 +64,32 @@ if __name__ == '__main__':
 
     # Initialize
     rospy.init_node('take_photo', anonymous=False)
-    camera = TakePhoto()
-    path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
+    # camera = TakePhoto()
+    # path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
 
-    # Take a photo
+    # # Take a photo
 
-    # Use '_image_title' parameter from command line
-    # Default value is 'photo.jpg'
-    # img_title = rospy.get_param('~image_title', 'photo.jpg')
+    # # Use '_image_title' parameter from command line
+    # # Default value is 'photo.jpg'
+    # # img_title = rospy.get_param('~image_title', 'photo.jpg')
 
-    # cv2.imshow('window', camera.get_image())
-    # cv2.waitKey(0)
+    # # cv2.imshow('window', camera.get_image())
+    # # cv2.waitKey(0)
 
-    if camera.take_picture(path):
-        rospy.loginfo("Saved image " + path)
-    else:
-        rospy.loginfo("No images received")
+    # if camera.take_picture(path):
+    #     rospy.loginfo("Saved image " + path)
+    # else:
+    #     rospy.loginfo("No images received")
+
+    # get an instance of RosPack with the default search paths
+    rospack = rospkg.RosPack()
+
+    # list all packages, equivalent to rospack list
+    rospack.list() 
+
+    # get the file path for rospy_tutorials
+    path = rospack.get_path('turtle_guard') + '/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
+    print(path)
 
     # Sleep to give the last log messages time to be sent
     rospy.sleep(1)

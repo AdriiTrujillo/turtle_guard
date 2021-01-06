@@ -10,6 +10,7 @@ import tensorflow as tf
 import cv2
 import time
 import sys
+import rospkg
 
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
@@ -150,10 +151,12 @@ class TakePhoto:
 # Clase que contiene el Action server completo
 class detect_Person(object):
     # create messages that are used to publish feedback/result
+    _rospack = rospkg.RosPack()
     _feedback = GuardFeedback()
     _result = GuardResult()
     # CAMBIAR SEGUN LA RUTA DEL EQUIPO QUE SE USE
-    _model_path = '/home/adrii/catkin_ws/src/turtle_guard/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
+    # _model_path = '/home/adrii/catkin_ws/src/turtle_guard/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
+    _model_path = _rospack.get_path('turtle_guard') + '/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
     _odapi = DetectorAPI(path_to_ckpt=_model_path)
     _camera = TakePhoto()
 
@@ -162,7 +165,9 @@ class detect_Person(object):
         self._as = actionlib.SimpleActionServer(self._action_name, GuardAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
         # CAMBIAR SEGUN LA RUTA DEL EQUIPO QUE SE USE
-        self._path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
+        # self._path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
+        self._rospack = rospkg.RosPack()
+        self._path =  self._rospack.get_path('turtle_guard') + '/pictures/intruso.jpg'
     
     # Función callback donde se realiza el procesamiento
     def execute_cb(self, goal):
