@@ -160,6 +160,8 @@ class detect_Person(object):
     # UTILIZANDO ESTE METODO NO ES NECESARIO CAMBIAR NADA
     # Obtener la ruta del paquete turtle_guard independientemente del equipo en que se ejecute
     _model_path = _rospack.get_path('turtle_guard') + '/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
+    # OTRA RED DE PEOR RENDIMIENTO PERO MENORES REQUERIMIENTOS 
+    # _model_path = _rospack.get_path('turtle_guard') + '/Coco_Model/ssd_mobilenet_v1_coco_2017_11_17/frozen_inference_graph.pb'
     _odapi = DetectorAPI(path_to_ckpt=_model_path)
     _camera = TakePhoto()
 

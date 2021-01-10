@@ -1082,7 +1082,7 @@
     </light>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-2.90618 -10.1351 8.30412 0 0.633795 1.60187</pose>
+        <pose frame=''>-2.3572 -17.2806 13.681 0 0.497795 1.60987</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -1856,10 +1856,10 @@
       <pose frame=''>-3.68805 2.05387 0.01 0 0 -3.13513</pose>
     </model>
     <state world_name='default'>
-      <sim_time>1782 255000000</sim_time>
-      <real_time>177 930678043</real_time>
-      <wall_time>1610091066 678701132</wall_time>
-      <iterations>169669</iterations>
+      <sim_time>1799 293000000</sim_time>
+      <real_time>18 504785692</real_time>
+      <wall_time>1610317029 349901028</wall_time>
+      <iterations>17038</iterations>
       <model name='bench'>
         <pose frame=''>-4.46543 7.06844 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -1961,33 +1961,33 @@
         </link>
       </model>
       <model name='female02'>
-        <pose frame=''>-6.49951 -3.04231 0.000428 0.001589 -0.025061 1.68294</pose>
+        <pose frame=''>-6.49951 -3.04231 0.000417 0.001613 -0.025113 1.68294</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-6.49951 -3.04231 0.000428 0.001589 -0.025061 1.68294</pose>
+          <pose frame=''>-6.49951 -3.04231 0.000417 0.001613 -0.025113 1.68294</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0.130915 0.044041 46.9817 0 -0 0</wrench>
+          <wrench>0 0 -196.2 0 -0 0</wrench>
         </link>
       </model>
       <model name='female02bis'>
-        <pose frame=''>4.31002 9.31598 0.012348 0.014785 -0.022989 -0.492896</pose>
+        <pose frame=''>6.12782 8.33963 0.000516 -0.016927 -0.033438 0.050201</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>4.31002 9.31598 0.012348 0.014785 -0.022989 -0.492896</pose>
-          <velocity>-3e-06 -9e-06 -0.001178 0.019771 -0.007094 0</velocity>
+          <pose frame=''>6.12782 8.33963 0.000516 -0.016927 -0.033438 0.050201</pose>
+          <velocity>-3e-06 3e-06 0.001547 -0.006196 -0.005822 -0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0.023686 -0.103588 -15.9761 0 -0 0</wrench>
+          <wrench>-0.043331 -0.150257 30.2886 0 -0 0</wrench>
         </link>
       </model>
       <model name='female03'>
-        <pose frame=''>-7.19576 7.07594 -0.003501 0.011366 0.012675 -0.186988</pose>
+        <pose frame=''>-7.19576 7.07594 -0.003501 0.011366 0.012675 -0.186986</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-7.19576 7.07594 -0.003501 0.011366 0.012675 -0.186988</pose>
+          <pose frame=''>-7.19576 7.07594 -0.003501 0.011366 0.012675 -0.186986</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0.103872 -0.935055 10.846 0 -0 0</wrench>
+          <wrench>0.068579 -0.122907 1.52067 0 -0 0</wrench>
         </link>
       </model>
       <model name='floor_lamp_0'>
@@ -2061,23 +2061,23 @@
         </link>
       </model>
       <model name='male03'>
-        <pose frame=''>7.17958 -5.2427 0.010902 0.012554 0.002317 -2.9662</pose>
+        <pose frame=''>7.17958 -5.2427 0.010911 0.012565 0.002311 -2.9662</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>7.17958 -5.2427 0.010902 0.012554 0.002317 -2.9662</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
+          <pose frame=''>7.17958 -5.2427 0.010911 0.012565 0.002311 -2.9662</pose>
+          <velocity>0.000142 0.000169 0.007262 -0.015517 0.013021 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 -196.2 0 -0 0</wrench>
+          <wrench>5.68259 6.7719 290.489 0 -0 0</wrench>
         </link>
       </model>
       <model name='male03bis'>
-        <pose frame=''>-7.15828 3.99992 0.010908 0.012581 0.002305 -1e-06</pose>
+        <pose frame=''>-2.64859 3.99992 0.000513 0.012581 0.002305 -1e-06</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-7.15828 3.99992 0.010908 0.012581 0.002305 -1e-06</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
+          <pose frame=''>-2.64859 3.99992 0.000513 0.012581 0.002305 -1e-06</pose>
+          <velocity>-6.3e-05 -0.000178 0.007275 0.016289 -0.00575 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 -196.2 0 -0 0</wrench>
+          <wrench>-2.50932 -7.10872 291.016 0 -0 0</wrench>
         </link>
       </model>
       <model name='sofa'>
@@ -2171,7 +2171,7 @@
         </link>
       </model>
       <light name='female02bislight'>
-        <pose frame=''>4.0095 8.89679 1.5 0 -0 0</pose>
+        <pose frame=''>6.03915 7.5853 1.5 0 -0 0</pose>
       </light>
       <light name='female02light'>
         <pose frame=''>-6.1261 -2.63 1.5 0 -0 0</pose>
@@ -2180,7 +2180,7 @@
         <pose frame=''>-7.2644 6.51377 1.61485 0 -0 0</pose>
       </light>
       <light name='male03bislight'>
-        <pose frame=''>-7.44877 3.7 1.5 0 -0 0</pose>
+        <pose frame=''>-2.72552 3.7 1.64098 0 0 -0.647056</pose>
       </light>
       <light name='male03light'>
         <pose frame=''>7.3251 -4.81944 1.6 0 -0 0</pose>
