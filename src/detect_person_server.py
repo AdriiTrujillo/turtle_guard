@@ -155,13 +155,17 @@ class detect_Person(object):
     # Crear los mensajes para publicar en feedback/result
     _feedback = GuardFeedback()
     _result = GuardResult()
+
     # CAMBIAR SEGUN LA RUTA DEL EQUIPO QUE SE USE
     # _model_path = '/home/adrii/catkin_ws/src/turtle_guard/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
+    
     # UTILIZANDO ESTE METODO NO ES NECESARIO CAMBIAR NADA
     # Obtener la ruta del paquete turtle_guard independientemente del equipo en que se ejecute
     _model_path = _rospack.get_path('turtle_guard') + '/Coco_Model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb'
+    
     # OTRA RED DE PEOR RENDIMIENTO PERO MENORES REQUERIMIENTOS 
     # _model_path = _rospack.get_path('turtle_guard') + '/Coco_Model/ssd_mobilenet_v1_coco_2017_11_17/frozen_inference_graph.pb'
+    
     _odapi = DetectorAPI(path_to_ckpt=_model_path)
     _camera = TakePhoto()
 
@@ -169,8 +173,10 @@ class detect_Person(object):
         self._action_name = name
         self._as = actionlib.SimpleActionServer(self._action_name, GuardAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
+        
         # CAMBIAR SEGUN LA RUTA DEL EQUIPO QUE SE USE
         # self._path = '/home/adrii/catkin_ws/src/turtle_guard/pictures/intruso.jpg'
+
         # UTILIZANDO ESTE METODO NO ES NECESARIO CAMBIAR NADA
         # Obtener la ruta del paquete turtle_guard independientemente del equipo en que se ejecute  
         self._rospack = rospkg.RosPack()

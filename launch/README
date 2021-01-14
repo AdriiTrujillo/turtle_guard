@@ -1,0 +1,19 @@
+USO DE LOS ARCHIVOS LAUNCH 
+
+turtle_guard.launch: 
+    Por DEFECTO lanzará una oficina CON PERSONAS para poder probar la aplicación.
+    Si se quiere que este archivo lance la oficina sin personas entoces se debe comentar la linea 5
+    y descomentar la linea 6 del archivo .launch. 
+
+    Si se quiere realizar tambien la navegación con el robot será necesario lanzar tambien el archivo
+    guard_navigation.launch
+
+gurad.launch:
+    Por DEFECTO lanzará una oficina SIN PERSONAS si se quiere probar con personas cuando se lance
+    el archivo se deberá añadir justo después del nombre de este people:=ture quedando el comando como:
+
+    ***************************************************************************************************
+    ***                 roslaunch turtle_guard gurad.launch people:=ture                            ***
+    ***************************************************************************************************
+
+    Este archivo .launch lanzará todo lo necesario para realizar también la navegación del robot.
